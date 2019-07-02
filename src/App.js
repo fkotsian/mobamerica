@@ -10,13 +10,16 @@ class App extends Component {
     events: [],
     next: null,
     prev: null,
-    currentPosition: null,
+    lat: null,
+    lng: null,
+    zip: null,
   }
   gMap = null
   gMapRef = null
   bodyRef = null
   eventListRef = null
   eventListAnchorRef = null
+  markers = []
 
   componentDidMount() {
     // load gMap
@@ -47,9 +50,11 @@ class App extends Component {
         }
 
         this.setState({
-          currentPosition: pos,
+          lat: pos.lat,
+          lng: pos.lng,
         }, () => {
           cb && cb()
+          this.reverseGeocode(pos.lat, pos.lng)
         })
 
       }, () => {
@@ -58,17 +63,43 @@ class App extends Component {
     }
   }
 
+  reverseGeocode(lat, lng) {
+    const geocoder = new window.google.maps.Geocoder
+    console.log("REVERSE GEOCODE INIT", lat, lng)
+
+    geocoder.geocode({
+      'location': {
+        lat: lat,
+        lng: lng,
+      },
+    },
+    (res, status) => {
+      if (status === 'OK') {
+        if (res[0]) {
+          console.log("REVERSE GEOCODED")
+          console.log(res[0])
+          this.setState({
+            zip: res[0].address_components[7] && res[0].address_components[7].long_name,
+          })
+        }
+      }
+      else {
+        console.log("FAILED TO GEOCODE")
+      }
+    })
+  }
+
   createMap() {
     console.log("CURRENT POS")
-    console.log(this.state.currentPosition)
+    console.log(this.state.lat, this.state.lng)
 
     const gMap = new window.google.maps.Map(
       this.gMapRef,
       {
         zoom: 10,
         center: {
-          lat: 40.04 || this.state.currentPosition.lat || 43,
-          lng: -76.02 || this.state.currentPosition.lng || -79,
+          lat: this.state.lat || 43,
+          lng: this.state.lng || -79,
         },
         disableDefaultUI: true,
       }
@@ -82,8 +113,6 @@ class App extends Component {
       return
     }
 
-    console.log("HAS MAP?", this.gMap)
-
     let m = new window.google.maps.Marker({
       position: {
         lat: lat,
@@ -94,15 +123,45 @@ class App extends Component {
       label: label,
       animation: window.google.maps.Animation.DROP,
     })
-    console.log("Marker: ")
-    console.log(m)
+
+    return m
+  }
+
+  queryStrFor(base) {
+    if (!/\?/.test(base)) {
+      base += "?"
+    }
+    else if (base.charAt(base.length-1) !== '&') {
+      base += '&'
+    }
+
+    if (this.state.zip) {
+      base += `zipcode=${this.state.zip}&`
+    }
+
+    return base
+  }
+
+  clearMarkers = () => {
+    console.log("CLEARING MARKERS")
+    console.log(this.markers)
+    this.markers.forEach(m => {
+      m.setMap(null)
+      m = null
+    })
+
+    this.markers = []
+    console.log("CLEARED MARKERS")
   }
 
   fetchEvents(
     url=`${this.API_BASE}/events`
   ) {
+    console.log("FETCHING: ", this.queryStrFor(url))
+    this.clearMarkers()
+
     return axios.get(
-      url
+      this.queryStrFor(url)
     ).then(res => {
       console.log("EVENTS!")
       console.log(res)
@@ -113,20 +172,28 @@ class App extends Component {
         next: data['next'],
         prev: data['previous'],
       })
-
-      data['data'].forEach((event, i) => {
+      return data['data']
+    }).then(newEvents => {
+      let markers = newEvents.map((event, i) => {
+        let loc = event.location && event.location.location || {}
         console.log("ADDING MARKER",
           event.location && event.location.location && event.location.location.latitude,
           event.location && event.location.location && event.location.location.longitude,
           event.title,
         )
-        event.location && event.location.location && this.createMarker(
-          event.location.location.latitude,
-          event.location.location.longitude,
+        let m = this.createMarker(
+          loc.latitude,
+          loc.longitude,
           event.title,
-          i,
+          i.toString(),
         )
+        return m
       })
+
+      console.log("MARKERS ADDED: ", markers.length)
+      console.log(markers)
+      this.markers = markers.filter(m => !!m)
+      console.log(this.markers)
     })
   }
 
@@ -147,6 +214,11 @@ class App extends Component {
           <p>
             Welcome to MobAmerica
           </p>
+          <div>
+            Current Loc: {this.state.lat}, {this.state.lng}
+            <br />
+            ZIP: {this.state.zip}
+          </div>
         </header>
 
         <div
@@ -165,23 +237,62 @@ class App extends Component {
               this.state.events.map(e => (
                 <div
                   key={e.id}
-                  className="event-item"
+                  className="eventItem"
                 >
-                  <a
-                    href={e.browser_url}
-                    target="_blank"
+                  <div
+                    className="eventItem__left"
                   >
-                    {e.title}
-                  </a>
-                  <p>
-                    {e.sponsor.name}
-                  </p>
-                  <p>
-                    { e.summary }
-                  </p>
-                  <p>
-                    {e.location && (e.location.locality || e.location.postal_code)}
-                  </p>
+                    <span
+                    >
+                      <a
+                        href={e.browser_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {e.title}
+                      </a>
+                      {
+                        e.timeslots && e.timeslots.length > 0
+                          ?
+                            e.timeslots
+                              .filter(t => !t.is_full)
+                              .slice(0,3)
+                              .map(t => (
+                                <span
+                                >
+                                  {new Date(t.start_date * 1000).toLocaleString()} - {new Date(t.end_date * 1000).toLocaleString()}
+                                </span>
+                            ))
+                          :
+                            ''
+                      }
+                    </span>
+                    <p>
+                      {e.sponsor.name}
+                    </p>
+                    <p>
+                      { e.summary }
+                    </p>
+                    <p>
+                      {e.location && (e.location.locality || e.location.postal_code)}
+                    </p>
+                  </div>
+
+                  <div
+                    className="eventItem__right"
+                  >
+                    {
+                      e.featured_image_url
+                        ?
+                          <img
+                            onError={(e) => {e.target.width = 0; e.target.height = 0}}
+                            className="eventItem__image"
+                            src={e.featured_image_url}
+                          />
+                        :
+                          ''
+                    }
+                  </div>
                 </div>
               ))
             }
@@ -200,6 +311,7 @@ class App extends Component {
             className="eventList__nav"
           >
             <a
+              className="eventList__nav__link"
               disabled={!this.state.prev}
               onClick={this.fetchPage(this.state.prev)}
               href={this.state.prev}
@@ -207,6 +319,7 @@ class App extends Component {
               Prev
             </a>
             <a
+              className="eventList__nav__link"
               disabled={!this.state.next}
               onClick={this.fetchPage(this.state.next)}
               href={this.state.next}
