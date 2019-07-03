@@ -5,7 +5,13 @@ import {
 import axiosMock from 'axios'
 import App from './index.js'
 
+const mockData = {
+  data: {
+    data: [],
+  }
+}
 jest.mock('axios')
+axiosMock.get.mockImplementation(() => Promise.resolve(mockData))
 
 it('renders without crashing', () => {
   const { getByText } = render(<App />)
@@ -40,11 +46,7 @@ describe('on mount', () => {
 describe('when a zip code is geocoded', () => {
   it('fetches events in that zip code', () => {
     const mockGetEvents = jest.fn(_ => {
-      return Promise.resolve({
-        data: {
-          data: [],
-        }
-      })
+      return Promise.resolve(mockData)
     })
     axiosMock.get = mockGetEvents
 

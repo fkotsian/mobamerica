@@ -149,6 +149,7 @@ class App extends Component {
       eventsErr: false,
       events: [],
     })
+
     return axios.get(
       url
     ).then(res => {

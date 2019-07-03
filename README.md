@@ -2,6 +2,11 @@
 
 Exercise: Display Mobilize.Us events in list and map form
 
+### Running the App
+
+- Start dev server: `yarn start`
+- Run tests via Jest: `yarn test`
+
 ### Features
 
 - detects user's lat/lng (or defaults to USA if user denies access)
