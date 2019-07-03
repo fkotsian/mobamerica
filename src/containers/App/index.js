@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import axios from 'axios'
 import EventList from '../../components/EventList'
 import EventMap from '../../components/EventMap'
-import './App.css';
+import './style.css';
 
 class App extends Component {
 

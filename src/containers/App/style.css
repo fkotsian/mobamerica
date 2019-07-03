@@ -1,0 +1,36 @@
+.App {
+  text-align: center;
+}
+
+.header {
+  height: 80px;
+  width: 100%;
+}
+
+.body {
+  display: flex;
+  width: 80%;
+  margin: 0 auto;
+}
+
+@media all and (max-width: 600px) {
+  .body {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+  }
+}
+
+.footer {
+  width: 100%;
+  display: block;
+}
+
+.pagination {
+  padding-top: 8px;
+}
+
+.pagination__link {
+  margin-left: 4px;
+  margin-right: 4px;
+}

@@ -1,5 +1,6 @@
 import React, {PureComponent} from 'react'
 import dayjs from 'dayjs'
+import './style.css'
 
 const EventListItem = ({
   id,
@@ -12,10 +13,10 @@ const EventListItem = ({
   imageUrl
 }) => (
   <div
-    className="eventItem"
+    className="eventListItem"
   >
     <div
-      className="eventItem__left"
+      className="eventListItem__left"
     >
       <span
       >
@@ -55,14 +56,14 @@ const EventListItem = ({
     </div>
 
     <div
-      className="eventItem__right"
+      className="eventListItem__right"
     >
       {
         imageUrl
           ?
           <img
             onError={(e) => {e.target.width = 0; e.target.height = 0}}
-            className="eventItem__image"
+            className="eventListItem__image"
             src={imageUrl}
           />
           :

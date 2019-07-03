@@ -1,0 +1,28 @@
+.eventList {
+  width: 65%;
+  height: calc(100vh - 160px);
+  overflow-y: scroll;
+  padding-right: 3%;
+}
+
+.eventList__loading {
+  height: 100%;
+  width: 43%;
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media all and (max-width: 600px) {
+  .body .eventList {
+    height: calc(45vh);
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .body .eventList__loading {
+    width: 80%;
+    margin: 0 auto;
+  }
+}

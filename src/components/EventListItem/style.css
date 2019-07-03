@@ -1,0 +1,52 @@
+.eventListItem {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 1px solid blue;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 8px;
+
+  width: 100%;
+}
+
+.eventListItem__left {
+  width: 80%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  justify-content: center;
+}
+.eventListItem__right {
+  width: 20%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.eventListItem__image {
+  width: 100%;
+}
+
+@media all and (max-width: 600px) {
+  .App .eventListItem {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .App .eventListItem__left {
+    align-items: center;
+  }
+
+  .App .eventListItem__right {
+    width: 70%;
+  }
+
+  .App .eventListItem__right .eventListItem__image {
+    width: 100%;
+  }
+}

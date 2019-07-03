@@ -1,0 +1,12 @@
+.eventMap {
+  width: 35%;
+  height: calc(100vh - 160px);
+}
+
+@media all and (max-width: 600px) {
+  .App .eventMap {
+    height: calc(30vh);
+    width: 80%;
+    margin: 0 auto;
+  }
+}
