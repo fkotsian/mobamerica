@@ -40,10 +40,20 @@
   padding-right: 3%;
 }
 
-.eventList__nav {
+.eventList__loading {
+  height: 100%;
+  width: 43%;
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.eventList__nav__link {
+.pagination {
+  padding-top: 8px;
+}
+
+.pagination__link {
   margin-left: 4px;
   margin-right: 4px;
 }

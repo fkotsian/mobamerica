@@ -1,8 +1,11 @@
 import React, {PureComponent} from 'react'
-import axios from 'axios'
+import PropTypes from 'prop-types'
 import EventListItem from '../../components/EventListItem'
+import Modal from '../../components/Modal'
 
 class EventList extends PureComponent {
+
+  static DEFAULT_LOADING_MSG = '... Loading events in your area ...'
 
   eventListAnchorRef = null
 
@@ -13,23 +16,65 @@ class EventList extends PureComponent {
   }
 
   scrollToTop() {
-    this.eventListAnchorRef.scrollIntoView({
-      behavior: 'smooth',
-    })
+    this.eventListAnchorRef &&
+      this.eventListAnchorRef.scrollIntoView &&
+      typeof this.eventListAnchorRef.scrollIntoView === 'function' &&
+      this.eventListAnchorRef.scrollIntoView({
+        behavior: 'smooth',
+      })
   }
 
   render() {
     return (
       <div
         className="eventList"
-        ref={el => this.eventListRef = el}
+        data-testid="eventList"
       >
         <div
           ref={el => this.eventListAnchorRef = el}
         >
         </div>
         {
-          this.props.events.map(e => (
+          // server error message
+          this.props.error
+            ?
+              <span
+                className="eventList__loading"
+              >
+                Whoops! We weren't able to load any event data. But don't worry - it's there! Please try again in just one second...
+              </span>
+            :
+              ''
+        }
+        {
+          // loading message
+          this.props.loading && !this.props.error
+            ?
+              <span
+                className="eventList__loading"
+              >
+                {
+                  this.props.customLoadingMsg || EventList.DEFAULT_LOADING_MSG
+                }
+              </span>
+            :
+              ''
+        }
+        {
+          // no events found message
+          !this.props.loading && !this.props.error && this.props.events.length === 0
+            ?
+              <span
+                className="eventList__loading"
+              >
+                Huh! We couldn't find any events in your area. Want to reload and try enabling geolocation?
+              </span>
+            :
+              ''
+        }
+        {
+          // display events
+          this.props.events.length > 0 && this.props.events.map(e => (
             <EventListItem
               key={e.id}
               id={e.id}
@@ -46,6 +91,17 @@ class EventList extends PureComponent {
       </div>
     )
   }
+}
+
+EventList.defaultProps = {
+  events: [],
+}
+
+EventList.propTypes = {
+  events: PropTypes.array,
+  loading: PropTypes.bool,
+  customLoadingMsg: PropTypes.string,
+  error: PropTypes.bool,
 }
 
 export default EventList

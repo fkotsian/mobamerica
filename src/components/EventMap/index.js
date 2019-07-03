@@ -2,6 +2,11 @@ import React, {PureComponent} from 'react'
 
 class EventMap extends PureComponent {
 
+  static DEFAULT_ZOOM = 3
+  static CITY_ZOOM = 10
+  static DEFAULT_LAT = 40
+  static DEFAULT_LNG = -95
+
   // class property syntax proposal (currently stage-3)
   gMap = null
   gMapRef = null
@@ -12,13 +17,12 @@ class EventMap extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.events !== prevProps.events) {
-      this.clearMarkers()
-      this.createMarkers(this.props.events)
-    }
+    this.clearMarkers()
+    this.createMarkers(this.props.events)
 
     if (this.props.lat !== prevProps.lat || this.props.lng !== prevProps.lng) {
       this.centerMap()
+      this.zoomMap()
     }
   }
 
@@ -27,6 +31,19 @@ class EventMap extends PureComponent {
       lat: this.props.lat,
       lng: this.props.lng,
     })
+  }
+
+  zoomMap() {
+    const zoom = this.zoomLevel()
+    this.gMap && this.gMap.setZoom(zoom)
+  }
+
+  zoomLevel() {
+    const zoomLevel = (this.props.lat && this.props.lng)
+      ? EventMap.CITY_ZOOM
+      : EventMap.DEFAULT_ZOOM
+
+    return zoomLevel
   }
 
   attemptLoadMap = () => {
@@ -43,13 +60,15 @@ class EventMap extends PureComponent {
     console.log("CURRENT POS")
     console.log(this.props.lat, this.props.lng)
 
+    const zoomLevel = this.zoomLevel()
+
     const gMap = new window.google.maps.Map(
       this.gMapRef,
       {
-        zoom: 10,
+        zoom: zoomLevel,
         center: {
-          lat: this.props.lat || 43,
-          lng: this.props.lng || -79,
+          lat: this.props.lat || EventMap.DEFAULT_LAT,
+          lng: this.props.lng || EventMap.DEFAULT_LNG,
         },
         disableDefaultUI: true,
       }
@@ -89,7 +108,7 @@ class EventMap extends PureComponent {
         loc.latitude,
         loc.longitude,
         event.title,
-        i.toString(),
+        (i+1).toString(),
       )
       return m
     })
@@ -116,6 +135,7 @@ class EventMap extends PureComponent {
     return (
       <div
         className="eventMap"
+        data-testid="eventMap"
         ref={el => this.gMapRef = el}
       >
       </div>
