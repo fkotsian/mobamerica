@@ -19,6 +19,15 @@
   align-items: flex-start;
   justify-content: center;
 }
+
+.eventListItem__left__title a {
+  width: 60%;
+}
+
+.eventListItem__left__times {
+  margin-top: 8px;
+}
+
 .eventListItem__right {
   width: 20%;
   display: flex;

@@ -34,7 +34,6 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.zip !== prevState.zip) {
       this.fetchEvents(undefined, this.state.zip)
-      console.log("EVENTS REFETCHED ON ZIP")
     }
   }
 
@@ -49,14 +48,12 @@ class App extends Component {
   }
 
   setZip(zip) {
-    console.log("SETTING ZIP: ", zip)
     this.setState({
       zip: zip,
     })
   }
 
   getCurrentPosition(cb) {
-    console.log("CURR POS?")
     if (window.navigator.geolocation) {
       window.navigator.geolocation.getCurrentPosition((position) => {
         var pos = {
@@ -98,7 +95,6 @@ class App extends Component {
 
   reverseGeocode(lat, lng) {
     const geocoder = new window.google.maps.Geocoder
-    console.log("REVERSE GEOCODE INIT", lat, lng)
 
     geocoder.geocode({
       'location': {
@@ -108,10 +104,7 @@ class App extends Component {
     },
     (res, status) => {
       if (status === 'OK' && res[0]) {
-        console.log("REVERSE GEOCODED")
-        console.log(res[0])
         let zip = res[0].address_components[7] && res[0].address_components[7].long_name
-        console.log("ZIP IN GEOCODE: ", zip)
         this.setZip(zip)
       }
       else {
@@ -151,7 +144,6 @@ class App extends Component {
 
     url = this.queryStrFor(url, zip)
 
-    console.log("FETCHING: ", url)
     this.setState({
       loading: true,
       eventsErr: false,
@@ -160,8 +152,6 @@ class App extends Component {
     return axios.get(
       url
     ).then(res => {
-      console.log("EVENTS!")
-      console.log(res)
       return res['data']
     }, err => {
       console.log("ERROR FETCHING EVENTS")

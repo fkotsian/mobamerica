@@ -50,7 +50,6 @@ class EventMap extends PureComponent {
   attemptLoadMap = () => {
     if (window.google) {
       this.gMap = this.createMap()
-      console.log("MAP CREATED!")
     }
     else {
       window.setTimeout(this.attemptLoadMap, 1000)
@@ -58,9 +57,6 @@ class EventMap extends PureComponent {
   }
 
   createMap() {
-    console.log("CURRENT POS")
-    console.log(this.props.lat, this.props.lng)
-
     const zoomLevel = this.zoomLevel()
 
     const gMap = new window.google.maps.Map(
@@ -100,11 +96,6 @@ class EventMap extends PureComponent {
   createMarkers(events) {
     let markers = events.map((event, i) => {
       let loc = event.location && event.location.location || {}
-      console.log("ADDING MARKER",
-        event.location && event.location.location && event.location.location.latitude,
-        event.location && event.location.location && event.location.location.longitude,
-        event.title,
-      )
       let m = this.createMarker(
         loc.latitude,
         loc.longitude,
@@ -114,22 +105,16 @@ class EventMap extends PureComponent {
       return m
     })
 
-    console.log("MARKERS ADDED: ", markers.length)
-    console.log(markers)
     this.markers = markers.filter(m => !!m)
-    console.log(this.markers)
   }
 
   clearMarkers() {
-    console.log("CLEARING MARKERS")
-    console.log(this.markers)
     this.markers.forEach(m => {
       m.setMap(null)
       m = null
     })
 
     this.markers = []
-    console.log("CLEARED MARKERS")
   }
 
   render() {

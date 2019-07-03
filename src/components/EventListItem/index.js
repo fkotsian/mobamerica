@@ -18,7 +18,8 @@ const EventListItem = ({
     <div
       className="eventListItem__left"
     >
-      <span
+      <div
+        className="eventListItem__left__title"
       >
         <a
           href={browserUrl}
@@ -27,23 +28,27 @@ const EventListItem = ({
         >
           {title}
         </a>
+      </div>
+      <div
+        className="eventListItem__left__times"
+      >
         {
           timeslots && timeslots.length > 0
             ?
-              timeslots
-                .filter(t => !t.is_full)
-                .slice(0,1)
-                .map(t => (
-                  <span
-                    key={t.id}
-                  >
-                    {dayjs(t.start_date * 1000).format('MM/DD/YY HH:mm')} - {dayjs(t.end_date * 1000).format('MM/DD/YY HH:mm')}
-                  </span>
-                ))
+            timeslots
+            .filter(t => !t.is_full)
+            .slice(0,1)
+            .map(t => (
+              <span
+                key={t.id}
+              >
+                {dayjs(t.start_date * 1000).format('M/DD/YY, h:mm a')} - {dayjs(t.end_date * 1000).format('h:mm a')}
+              </span>
+            ))
             :
             ''
         }
-      </span>
+      </div>
       <p>
         {sponsor.name}
       </p>
