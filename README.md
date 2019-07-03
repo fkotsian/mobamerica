@@ -23,4 +23,4 @@ Exercise: Display Mobilize.Us events in list and map form
 - started ZIP functionality, would like to provide an opt-out (view global events)
 - would like to polish CSS with some more color, gradients, numbering, and better image placement
 
-- for fun: click on an event box zooms to the event's location :)
+- for fun: click on an event box to zoom to the event's location :)

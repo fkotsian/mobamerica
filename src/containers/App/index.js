@@ -7,7 +7,6 @@ import './App.css';
 class App extends Component {
 
   static API_BASE = 'https://api.mobilize.us/v1'
-  static DEFAULT_ZIP = '10003'
 
   state = {
     events: [],
@@ -18,6 +17,7 @@ class App extends Component {
     zip: null,
     eventsErr: null,
     loading: true,
+    geocodingEnabled: true,
   }
   bodyRef = null
 
@@ -71,11 +71,20 @@ class App extends Component {
         )
       }, () => {
         console.log("Unable to get location via Geocoordinate API; defaulting to USA")
-
-        // zip-based hook not triggered, so load global events
-        this.fetchEvents()
+        this.getDefaultPosition()
       })
     }
+    else {
+      this.getDefaultPosition()
+    }
+  }
+
+  getDefaultPosition() {
+    this.setState({
+      geocodingEnabled: false,
+    })
+    // zip-based hook not triggered, so load global events
+    this.fetchEvents()
   }
 
   attemptReverseGeocode(lat, lng) {
@@ -187,9 +196,13 @@ class App extends Component {
             Welcome to MobAmerica
           </p>
           <div>
-            Current Loc: {this.state.lat}, {this.state.lng}
-            <br />
-            ZIP: {this.state.zip}
+            My Location: {
+              this.state.geocodingEnabled
+                ?
+                  this.state.zip || 'USA'
+                :
+                  'The World'
+            }
           </div>
         </header>
 

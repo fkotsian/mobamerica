@@ -25,12 +25,56 @@
 
 .header {
   height: 80px;
+  width: 100%;
 }
 
 .body {
   display: flex;
   width: 80%;
   margin: 0 auto;
+}
+
+@media all and (max-width: 600px) {
+  .body {
+    display: flex;
+    flex-flow: column wrap;
+    width: 100%;
+  }
+
+  .body .eventList {
+    height: calc(45vh);
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .body .eventMap {
+    height: calc(30vh);
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .body .eventList__loading {
+    width: 80%;
+    margin: 0 auto;
+  }
+
+  .body .eventItem {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .body .eventItem__left {
+    align-items: center;
+  }
+
+  .body .eventItem__right {
+    width: 70%;
+  }
+  .body .eventItem__right .eventItem__image {
+    width: 100%;
+  }
 }
 
 .eventList {
@@ -87,7 +131,7 @@
 }
 
 .eventItem__image {
-  height: 120px;
+  width: 100%;
 }
 
 .eventMap {

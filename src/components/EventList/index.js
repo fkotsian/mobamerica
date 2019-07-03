@@ -1,7 +1,6 @@
 import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 import EventListItem from '../../components/EventListItem'
-import Modal from '../../components/Modal'
 
 class EventList extends PureComponent {
 
