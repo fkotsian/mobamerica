@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@testing-library/react": "^8.0.4",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "dayjs": "^1.8.14",
     "jest-dom": "^3.5.0",
     "react": "^16.8.6",
